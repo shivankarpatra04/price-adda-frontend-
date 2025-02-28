@@ -1,0 +1,127 @@
+.navbar {
+    background-color: #1E293B;
+    width: 250px;
+    /* Adjust width as needed */
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    padding-top: 1rem;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.nav-item:hover:not(.active) {
+    background-color: #334155;
+    border-left: 4px solid #60A5FA;
+    color: #60A5FA;
+    transform: translateX(4px);
+    transition: all 0.3s ease;
+}
+
+.nav-item-text:hover {
+    color: #60A5FA;
+}
+
+.nav-item-icon:hover {
+    color: #60A5FA;
+}
+
+.nav-item.active {
+    background-color: #2563eb;
+    color: white;
+    font-weight: 500;
+}
+
+.nav-item-icon {
+    color: white;
+}
+
+.nav-item-text {
+    color: white;
+    font-size: 1rem;
+    /* 16px */
+}
+
+.dropdown-wrapper {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 200px;
+    z-index: 51;
+}
+
+.dropdown {
+    background-color: #334155;
+    /* Lighter shade than #1E293B */
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    padding: 4px 0;
+    margin-top: 4px;
+}
+
+.dropdown-item {
+    padding: 8px 16px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+    font-size: 0.875rem;
+    /* 14px */
+}
+
+.dropdown-item.active {
+    background-color: #2563eb;
+    color: white;
+    font-weight: 500;
+}
+
+.nav-item-icon.active {
+    color: white;
+}
+
+.group:hover .dropdown {
+    display: block;
+}
+
+.page-container {
+    margin-left: 250px;
+    /* Same width as navbar */
+    flex: 1;
+    padding: 1rem;
+}
+
+.layout-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.dropdown-menu {
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border-radius: 0.375rem;
+    margin-top: 0.25rem;
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
