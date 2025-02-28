@@ -1,6 +1,5 @@
 "use client"
 import SignupForm from '@/components/auth/SignupForm';
-import Link from 'next/link';
 
 export default function AdminSignup() {
     return (

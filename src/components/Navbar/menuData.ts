@@ -1,4 +1,3 @@
-import React from 'react';
 import type { LucideIcon } from 'lucide-react';
 import {
     Home,
@@ -11,9 +10,6 @@ import {
     Tag,
     Grid,
     Gift,
-    Mail,
-    Settings,
-    MessageSquare,
     Bell,
     Search,
     Share2,
@@ -27,15 +23,13 @@ export interface DropdownItem {
     text: string;
 }
 
-interface MenuItem {
+export interface MenuItem {
     key: string;
     text: string;
     icon: LucideIcon;
-    dropdownItems: Array<{
-        key: string;
-        text: string;
-    }>;
+    dropdownItems: Array<DropdownItem>;
 }
+
 
 export const menuItems: MenuItem[] = [
     {

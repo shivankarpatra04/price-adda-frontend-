@@ -1,80 +1,97 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { UserType } from '@/types/auth';
-import { validateUserRole } from '@/services/roleValidation';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 interface AuthContextType {
     isAuthenticated: boolean;
     userType: UserType | null;
-    login: (email: string, password: string, userType: UserType) => Promise<void>;
+    token: string | null;
+    user: any | null;
+    login: (userType: UserType, token: string, userData: any) => Promise<void>;
     logout: () => void;
-    redirectPath: string;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+export function AuthProvider({ children }: { children: ReactNode }) {
+    const router = useRouter();
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [userType, setUserType] = useState<UserType | null>(null);
-    const [redirectPath, setRedirectPath] = useState('/home');
+    const [token, setToken] = useState<string | null>(null);
+    const [user, setUser] = useState<any | null>(null);
 
     useEffect(() => {
-        setIsAuthenticated(!!window.localStorage.getItem('token'));
-        const user = JSON.parse(window.localStorage.getItem('user') || '{}');
-        setUserType(user.type || null);
-    }, []);
-
-    const login = async (email: string, password: string, type: UserType): Promise<void> => {
-        const loginResponse = await fetch(`${process.env.API_URL}/auth/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({ email, password })
-        });
-
-        const data = await loginResponse.json();
-
-        if (loginResponse.ok) {
-            localStorage.setItem('token', data.response.token);
-            localStorage.setItem('user', JSON.stringify(data.response.user));
-            
+        const token = window.localStorage.getItem('token');
+        const userType = window.localStorage.getItem('userType') as UserType;
+        const storedUser = window.localStorage.getItem('user');
+    
+        if (token && userType) {
             setIsAuthenticated(true);
-            setUserType(type);
+            setToken(token);
+            setUserType(userType);
             
-            const paths = {
-                'user': '/home',
-                'admin': '/admin',
-                'super-admin': '/super-admin'
-            };
-            setRedirectPath(paths[type]);
-        } else {
-            throw new Error('Login failed');
+            if (storedUser && storedUser !== 'undefined') {
+                try {
+                    const parsedUser = JSON.parse(storedUser);
+                    if (parsedUser && typeof parsedUser === 'object') {
+                        setUser(parsedUser);
+                    }
+                } catch (error) {
+                    // Clear invalid user data
+                    window.localStorage.removeItem('user');
+                    setUser(null);
+                }
+            }
         }
+    }, []);
+    
+    const login = async (type: UserType, authToken: string, userData: any) => {
+        setIsAuthenticated(true);
+        setUserType(type);
+        setToken(authToken);
+        setUser(userData);
+        
+        localStorage.setItem('userType', type);
+        localStorage.setItem('token', authToken);
+        localStorage.setItem('user', JSON.stringify(userData));
+        
+        // Redirect based on user type
+        const routes = {
+            'user': '/home',
+            'admin': '/admin/dashboard',
+            'super-admin': '/super-admin/dashboard'
+        };
+        
+        window.location.href = routes[type];
     };
 
     const logout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
         setIsAuthenticated(false);
         setUserType(null);
-        setRedirectPath('/home');
+        setToken(null);
+        setUser(null);
+        
+        localStorage.removeItem('userType');
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
     };
 
     return (
-        <AuthContext.Provider value={{
-            isAuthenticated,
-            userType,
-            login,
-            logout,
-            redirectPath
+        <AuthContext.Provider value={{ 
+            isAuthenticated, 
+            userType, 
+            token, 
+            user,
+            login, 
+            logout 
         }}>
             {children}
         </AuthContext.Provider>
     );
-};
+}
 
 export function useAuth() {
     const context = useContext(AuthContext);

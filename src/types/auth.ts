@@ -1,9 +1,9 @@
+export type UserType = 'user' | 'admin' | 'super-admin';
+
 export interface User {
     _id: string;
     email: string;
     username: string;
     isEmailVerified: boolean;
-    roles: string[];
+    roles: UserType[];
 }
-
-export type UserType = 'user' | 'admin' | 'super-admin';

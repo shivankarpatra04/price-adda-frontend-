@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import Navbar from './Navbar/Navbar';
 import PageContainer from './PageContainer';
 

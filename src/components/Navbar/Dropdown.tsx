@@ -11,7 +11,7 @@ interface DropdownProps {
     onItemClick: (key: string) => void;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ items, isVisible, activeItem, parentKey, onItemClick }) => {
+const Dropdown: React.FC<DropdownProps> = ({ items, isVisible, activeItem, onItemClick }) => {
     if (!isVisible) return null;
 
     return (

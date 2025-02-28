@@ -1,6 +1,6 @@
 'use client';
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { menuItems } from './menuData';
+import React, { useState, useMemo, useCallback } from 'react';
+import { menuItems, MenuItem, DropdownItem } from './menuData';
 import NavItem from './NavItem';
 import Dropdown from './Dropdown';
 import './navbar.css';
@@ -12,16 +12,14 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-    const [selectedItem, setSelectedItem] = useState<string>(activeTab);
 
-    const isParentOfActiveItem = useCallback((route: any) => {
-        return route.dropdownItems?.some((item: any) => item.key === activeTab);
+    const isParentOfActiveItem = useCallback((route: MenuItem) => {
+        return route.dropdownItems?.some((item: DropdownItem) => item.key === activeTab);
     }, [activeTab]);
 
     const handleMenuItemClick = useCallback((key: string) => {
-        const clickedItem = menuItems.find(item => item.key === key);
+        const clickedItem = menuItems.find((item: MenuItem) => item.key === key);
 
-        // Reset openDropdown if clicking a different main menu item
         if (openDropdown && openDropdown !== key) {
             setOpenDropdown(null);
         }
@@ -32,18 +30,15 @@ const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
             setOpenDropdown(null);
         }
 
-        setSelectedItem(key);
         setActiveTab(key);
     }, [setActiveTab, openDropdown]);
 
-
-    const isItemActive = useCallback((route: any) => {
+    const isItemActive = useCallback((route: MenuItem) => {
         if (route.dropdownItems?.length) {
             return openDropdown === route.key || isParentOfActiveItem(route);
         }
         return activeTab === route.key;
     }, [openDropdown, activeTab, isParentOfActiveItem]);
-
 
     const renderedRoutes = useMemo(() => menuItems.map((route) => (
         <div key={route.key} className="relative">
@@ -65,12 +60,10 @@ const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
                         parentKey={route.key}
                         onItemClick={(key) => {
                             setActiveTab(key);
-                            setSelectedItem(key);
                         }}
                     />
                 </div>
             )}
-
         </div>
     )), [activeTab, openDropdown, handleMenuItemClick, isItemActive, isParentOfActiveItem]);
 
